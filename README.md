@@ -14,14 +14,14 @@ Follow the instructions below to set up the project for your own system
 
 1. **Clone the repository**  
    Open Command Prompt
-   Go line by line:
+   Go line by line: <br>
    git clone https://github.com/sophiaSyn/SkyGroupWork.git
    cd SkyGroupWork
    
 
 2. **Create and activate virtual environment**
    
-   python -m venv venv
+   python -m venv venv <br>
    venv\Scripts\activate
    
 
@@ -45,14 +45,14 @@ Follow the instructions below to set up the project for your own system
 ### macOS /  Linux Setup Instructions
 
 1. **Clone the repository**
-   Go line by line:
+   Go line by line: <br>
    git clone https://github.com/sophiaSyn/SkyGroupWork.git
    cd SkyGroupWork
    
 
 1. **Create and activate virtual environment**
    
-   python3 -m venv venv
+   python3 -m venv venv <br>
    source venv/bin/activate
    
 
