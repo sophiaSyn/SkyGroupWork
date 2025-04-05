@@ -1,83 +1,83 @@
-# 🌐 SkyGroupWork – Django Web Application
+# Sky Group Work Project - Mohammad Bari, Rahath Ali, Rtihik Jeyathees, Hashim Khan
 
-A collaborative Django-based web application developed for group coursework. This project follows best practices in version control, virtual environments, and team workflows using GitHub.
-
----
-
-## 📥 How to Clone & Set Up the Project
-
-Follow the instructions below to set up the project on your local machine for development.
+Django-Web Based Application for SKY Coursework
 
 ---
 
-### 🪟 Windows Setup Instructions
+##  Cloning and seting up the project
+
+Follow the instructions below to set up the project for your own system
+
+---
+
+### Windows Setup Instructions
 
 1. **Clone the repository**  
-   Open Command Prompt or PowerShell:
-   ```powershell
+   Open Command Prompt
+   Go line by line:
    git clone https://github.com/sophiaSyn/SkyGroupWork.git
    cd SkyGroupWork
-   ```
+   
 
 2. **Create and activate virtual environment**
-   ```powershell
+   
    python -m venv venv
    venv\Scripts\activate
-   ```
+   
 
 3. **Install required packages**
-   ```powershell
+   
    pip install -r requirements.txt
-   ```
+   
 
 4. **Apply database migrations**
-   ```powershell
+   
    python manage.py migrate
-   ```
+   
 
-5. **Run the development server**
-   ```powershell
+5. **Run the development server to test if set up has worked**
+   
    python manage.py runserver
-   ```
+   
 
 ---
 
-### 🍎 macOS / 🐧 Linux Setup Instructions
+### macOS /  Linux Setup Instructions
 
 1. **Clone the repository**
-   ```bash
+   Go line by line:
    git clone https://github.com/sophiaSyn/SkyGroupWork.git
    cd SkyGroupWork
-   ```
+   
 
-2. **Create and activate virtual environment**
-   ```bash
+1. **Create and activate virtual environment**
+   
    python3 -m venv venv
    source venv/bin/activate
-   ```
+   
 
-3. **Install required packages**
-   ```bash
+2. **Install required packages**
+   
    pip install -r requirements.txt
-   ```
+   
 
-4. **Apply database migrations**
-   ```bash
+3. **Apply database migrations**
+   
    python3 manage.py migrate
-   ```
+   
 
-5. **Run the development server**
-   ```bash
+4. **Run the development server**
+   
    python3 manage.py runserver
-   ```
+   
 
 ---
 
 ### 🔐 Create a Superuser (Optional for Admin Access)
 
-```bash
+
 python manage.py createsuperuser
-```
+
 
 Follow the prompts to set a username, email, and password.
 
