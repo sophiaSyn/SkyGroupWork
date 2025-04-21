@@ -1,0 +1,112 @@
+/* General Reset */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f6f6f6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* White Top Bar */
+.top-bar {
+    background-color: white;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.sky-logo {
+    height: 40px;
+}
+
+/* Gradient Sky Bar */
+.gradient-bar {
+    background: linear-gradient(to right, #ff6600, #ff0066, #9900cc, #0033cc);
+    padding: 15px 0;
+    text-align: center;
+    color: white;
+}
+
+.sky-title {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+/* Page Content Styling */
+.content-wrapper {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+}
+
+/* Auth Box */
+.auth-box {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.auth-box h2 {
+    margin-bottom: 20px;
+}
+
+/* Forms */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    text-align: left;
+}
+
+form input,
+form select {
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    padding: 10px;
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+button:hover {
+    background-color: #155dc1;
+}
+
+.auth-box p {
+    margin-top: 15px;
+}
+
+.auth-box a {
+    color: #1a73e8;
+}
+
+/* Footer */
+.footer {
+    background: linear-gradient(to right, #ff6600, #ff0066, #9900cc, #0033cc);
+    color: white;
+    padding: 15px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.footer a {
+    color: white;
+    text-decoration: underline;
+}

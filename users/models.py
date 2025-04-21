@@ -5,7 +5,6 @@ from django.contrib.auth.models import User
 
 class User(models.Model):
     userId = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=50)
     username = models.CharField(max_length=50, unique=True)
     email = models.EmailField(max_length=100, unique=True)
     password = models.CharField(max_length=15)
@@ -15,15 +14,16 @@ class User(models.Model):
     def __str__(self):
         return self.username
 
+
 class Role(models.Model):
     roleID = models.AutoField(primary_key=True)
     roleName = models.CharField(max_length=50)
     votePermission = models.BooleanField(default=False)
     viewTeamSummary = models.BooleanField(default=False)
     viewDepartmentSummary = models.BooleanField(default=False)
-    ManageTeamPermission = models.BooleanField(default=False)
+    manageTeamPermission = models.BooleanField(default=False)
     viewProgressPermission = models.BooleanField(default=False)
-    
+
     def __str__(self):
         return self.roleName
     

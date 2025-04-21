@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Sky Health Check{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+    <!-- Top White Bar -->
+    <div class="top-bar">
+        <img src="{% static 'images/skylogo.png' %}" alt="Sky Logo" class="sky-logo">
+    </div>
+
+    <!-- Gradient Bar -->
+    <div class="gradient-bar">
+        <h1 class="sky-title">Sky Health Check</h1>
+    </div>
+
+    <!-- Page Content -->
+    <div class="content-wrapper">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 Sky UK | <a href="#">Privacy & Cookies</a> | <a href="#">Terms & Conditions</a></p>
+    </footer>
+
+</body>
+</html>

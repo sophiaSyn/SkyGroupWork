@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sign Up - Sky Health Check{% endblock %}
+
+{% block content %}
+<div class="auth-box">
+    <h2>Create your SkyCheck account</h2>
+
+    {% if form.errors %}
+        <ul style="color: red;">
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <label for="id_username">Username:</label>
+        {{ form.username }}
+
+        <label for="id_email">Email:</label>
+        {{ form.email }}
+
+        <label for="id_password">Password:</label>
+        {{ form.password }}
+
+        <label for="id_confirm_password">Confirm Password:</label>
+        {{ form.confirm_password }}
+
+        <label for="id_role">Select Role:</label>
+        {{ form.role }}
+
+        <label for="id_team">Select Team:</label>
+        {{ form.team }}
+
+        <button type="submit">Sign Up</button>
+    </form>
+
+    <p>Already have an account? <a href="{% url 'login' %}">Log in here</a></p>
+</div>
+{% endblock %}
