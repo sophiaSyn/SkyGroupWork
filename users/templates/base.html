@@ -8,12 +8,37 @@
 </head>
 <body>
 
-    <!-- Top White Bar -->
+    <!-- Top White Bar with Sky Logo on the Left and Nav Items on the Right -->
     <div class="top-bar">
         <img src="{% static 'images/skylogo.png' %}" alt="Sky Logo" class="sky-logo">
+        <div class="nav-items">
+            <!-- Show 'About Us' link unless on About Us page and logged in -->
+            {% if request.path != '/users/' %}
+                <a href="{% url 'index' %}">About Us</a>
+            {% else %}
+                <!-- Change 'About Us' to 'Dashboard' if on About Us page and logged in -->
+                <a href="{% url 'dashboard' %}">Dashboard</a>
+            {% endif %}
+
+            {% if user.is_authenticated %}
+                <!-- If logged in, show 'Dashboard' and 'Log Out' -->
+                <a href="{% url 'dashboard' %}">Dashboard</a>
+                <a href="{% url 'logout' %}">Log Out</a>
+            {% else %}
+                <!-- If not logged in, show 'Log In' and 'Sign Up' links -->
+                {% if request.path == '/users/signup/' %}
+                    <a href="{% url 'login' %}">Log In</a>
+                {% elif request.path == '/users/login/' %}
+                    <a href="{% url 'signup' %}">Sign Up</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Log In</a>
+                    <a href="{% url 'signup' %}">Sign Up</a>
+                {% endif %}
+            {% endif %}
+        </div>
     </div>
 
-    <!-- Gradient Bar -->
+    <!-- Gradient Sky Bar with Sky Health Check Title -->
     <div class="gradient-bar">
         <h1 class="sky-title">Sky Health Check</h1>
     </div>

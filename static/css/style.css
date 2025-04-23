@@ -8,12 +8,12 @@ body {
     min-height: 100vh;
 }
 
-/* White Top Bar */
+/* White Top Bar with Logo on Left and Nav Items on Right */
 .top-bar {
     background-color: white;
     padding: 10px 20px;
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between; /* Aligns logo and nav-items on opposite sides */
     align-items: center;
 }
 
@@ -21,7 +21,18 @@ body {
     height: 40px;
 }
 
-/* Gradient Sky Bar */
+.nav-items {
+    display: flex;
+    gap: 20px; /* Space out the links */
+}
+
+.nav-items a {
+    color: black;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+/* Gradient Sky Bar (Navbar Inside Gradient) */
 .gradient-bar {
     background: linear-gradient(to right, #ff6600, #ff0066, #9900cc, #0033cc);
     padding: 15px 0;
@@ -44,7 +55,7 @@ body {
     padding: 40px 20px;
 }
 
-/* Auth Box */
+/* Auth Box (Login/Signup Form White Box) */
 .auth-box {
     background-color: white;
     padding: 30px;
@@ -109,4 +120,32 @@ button:hover {
 .footer a {
     color: white;
     text-decoration: underline;
+}
+
+/* About Us Page Container (White Box Styling) */
+.about-us-container {
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+/* White Box Styling for About Us Text */
+.about-us-box {
+    background-color: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 800px;
+    text-align: center;
+}
+
+.about-us-box h2 {
+    font-size: 32px;
+    margin-bottom: 20px;
+}
+
+.about-us-box p {
+    font-size: 18px;
+    line-height: 1.6;
 }

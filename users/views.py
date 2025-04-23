@@ -2,9 +2,13 @@ from django.shortcuts import render, redirect
 from .models import User
 from .forms import SignUpForm, LoginForm
 from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
 
-# Create your views here.
+# View for the About Us Page (index.html) which is now the homepage
+def index(request):
+    return render(request, 'index.html')  # This is the About Us page now
 
+# Login View
 def login_view(request):
     if request.method == "POST":
         form = LoginForm(request.POST)
@@ -33,7 +37,8 @@ def login_view(request):
         form = LoginForm()
 
     return render(request, "users/login.html", {"form": form})
-    
+
+# Sign Up View
 def signup_view(request):
     if request.method == "POST":
         form = SignUpForm(request.POST)
@@ -41,8 +46,8 @@ def signup_view(request):
             username = form.cleaned_data["username"]
             email = form.cleaned_data["email"]
             password = form.cleaned_data["password"]
-            role = form.cleaned_data["role"]          
-            team = form.cleaned_data["team"]          
+            role = form.cleaned_data["role"]
+            team = form.cleaned_data["team"]
 
             if User.objects.filter(email=email).exists():
                 form.add_error("email", "Email already exists.")
@@ -51,8 +56,8 @@ def signup_view(request):
                     username=username,
                     email=email,
                     password=password,
-                    roleId=role,                      
-                    teamID=team                
+                    roleId=role,
+                    teamID=team
                 )
                 request.session["user_id"] = user.userId
                 request.session["username"] = user.username
@@ -62,22 +67,23 @@ def signup_view(request):
         form = SignUpForm()
     return render(request, "users/signup.html", {"form": form})
 
-
+# Dashboard View
 def dashboard_view(request):
     if "user_id" not in request.session:
-        return redirect("login")
+        return redirect("login")  # Redirect to login if not logged in
 
     username = request.session.get("username")
     role = request.session.get("role")
     return render(request, "users/dashboard.html", {"username": username, "role": role})
 
-
+# Log Out View
 def logout_view(request):
     request.session.flush()
     return redirect("login")
 
+# Home Redirect View (Redirect to About Us page or Dashboard)
 def home_redirect_view(request):
     if "user_id" in request.session:
-        return redirect("dashboard") 
+        return redirect("dashboard")  # Redirect to dashboard if logged in
     else:
-        return redirect("login")  
+        return redirect("login")  # Redirect to login if not logged in
