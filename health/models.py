@@ -48,16 +48,22 @@ class Trend(models.Model):
 class Card(models.Model):
     cardID = models.AutoField(primary_key=True)
     cardName = models.CharField(max_length=50)
-    
+    order = models.PositiveIntegerField(default=0)
+
     def __str__(self):
         return self.cardName
+
     
 class Vote(models.Model):
     voteID = models.AutoField(primary_key=True)
     createdAt = models.DateTimeField(auto_now_add=True)
     sessionID = models.ForeignKey(Session, on_delete=models.CASCADE)
+    userID = models.ForeignKey('users.User', on_delete=models.CASCADE, null=True, blank=True)  # 👈 Add null=True
+    cardID = models.ForeignKey(Card, on_delete=models.CASCADE, null=True, blank=True)           # 👈 Add null=True
     stateID = models.ForeignKey(State, on_delete=models.CASCADE)
     trendID = models.ForeignKey(Trend, on_delete=models.CASCADE)
+    comment = models.TextField(blank=True, null=True)                                           # 👈 Add null=True
+
 
     def __str__(self):
         return f"Vote {self.voteID} - Session {self.sessionID.sessionID}"

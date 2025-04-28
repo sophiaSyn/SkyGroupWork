@@ -21,6 +21,7 @@ from users.views import home_redirect_view
 
 urlpatterns = [
     path('', home_redirect_view, name='home'), 
+    path('health/', include('health.urls')),
     path("users/", include("users.urls")),
     path("admin/", admin.site.urls),
 ]

@@ -3,6 +3,10 @@ from .models import User
 from .forms import SignUpForm, LoginForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from users.models import User as CustomUser
+from django.contrib.auth.decorators import login_required
+from health.models import Vote, Department, Team, State, Session
+from users.models import Role
 
 # View for the About Us Page (index.html) which is now the homepage
 def index(request):
@@ -65,16 +69,24 @@ def signup_view(request):
                 return redirect("dashboard")
     else:
         form = SignUpForm()
+
     return render(request, "users/signup.html", {"form": form})
 
 # Dashboard View
 def dashboard_view(request):
-    if "user_id" not in request.session:
-        return redirect("login")  # Redirect to login if not logged in
+    if 'user_id' not in request.session:
+        return redirect("login")
 
-    username = request.session.get("username")
-    role = request.session.get("role")
-    return render(request, "users/dashboard.html", {"username": username, "role": role})
+    try:
+        user = CustomUser.objects.get(userId=request.session['user_id'])
+    except CustomUser.DoesNotExist:
+        return redirect("login")
+
+    return render(request, "users/dashboard.html", {
+        "username": user.username,
+        "role_name": user.roleId.roleName,  # Pass roleName directly
+        "custom_user": user  # Full user object if needed
+    })
 
 # Log Out View
 def logout_view(request):
@@ -87,3 +99,62 @@ def home_redirect_view(request):
         return redirect("dashboard")  # Redirect to dashboard if logged in
     else:
         return redirect("login")  # Redirect to login if not logged in
+
+
+
+def summary_view(request):
+    if 'user_id' not in request.session:
+        return redirect('login')
+
+    try:
+        user = User.objects.get(userId=request.session['user_id'])  # Make sure you imported your correct User model
+    except User.DoesNotExist:
+        return redirect('login')
+
+    # Fetch only completed sessions (future-proof)
+    completed_sessions = Session.objects.all()
+
+    # Department Summary
+    departments = Department.objects.all()
+    department_data = {}
+
+    for department in departments:
+        votes = Vote.objects.filter(
+            sessionID__in=completed_sessions,
+            userID__teamID__departmentNo=department
+        )
+        red_count = votes.filter(stateID__stateColour="RED").count()
+        amber_count = votes.filter(stateID__stateColour="AMBER").count()
+        green_count = votes.filter(stateID__stateColour="GREEN").count()
+
+        if red_count > 0 or amber_count > 0 or green_count > 0:
+            department_data[department.departmentName] = {
+                "Red": red_count,
+                "Amber": amber_count,
+                "Green": green_count,
+            }
+
+    # Team Summary
+    teams = Team.objects.all()
+    team_data = {}
+
+    for team in teams:
+        votes = Vote.objects.filter(
+            sessionID__in=completed_sessions,
+            userID__teamID=team.teamID
+        )
+        red_count = votes.filter(stateID__stateColour="RED").count()
+        amber_count = votes.filter(stateID__stateColour="AMBER").count()
+        green_count = votes.filter(stateID__stateColour="GREEN").count()
+
+        if red_count > 0 or amber_count > 0 or green_count > 0:
+            team_data[team.teamName] = {
+                "Red": red_count,
+                "Amber": amber_count,
+                "Green": green_count,
+            }
+
+    return render(request, 'health/summary.html', {
+        'department_data': department_data,
+        'team_data': team_data,
+    })

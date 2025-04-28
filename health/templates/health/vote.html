@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Inject the selected Session ID into JavaScript -->
+<script>
+const selectedSessionID = {{ sessions.0.sessionID }}; // ✅ Correctly pass session ID
+</script>
+
+<div class="flex justify-center items-center min-h-[calc(100vh-8rem)] bg-gray-100">
+  <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md flex flex-col justify-center">
+
+    <!-- Card Counter -->
+    <div class="text-center text-gray-500 text-sm mb-4">
+      Card <span id="cardCounter">1</span> of {{ cards|length }}
+    </div>
+
+    <!-- Card Title -->
+    <h1 id="cardName" class="text-2xl font-bold text-center mb-6">
+      {{ cards.0.cardName }}
+    </h1>
+
+    <!-- Traffic Light Buttons -->
+    <div class="flex justify-center gap-6 mb-6">
+      <button id="redBtn" onclick="selectState('RED')" class="w-16 h-16 rounded-full bg-red-400 text-white font-bold hover:scale-110 transition">
+        RED
+      </button>
+      <button id="amberBtn" onclick="selectState('AMBER')" class="w-16 h-16 rounded-full bg-yellow-400 text-white font-bold hover:scale-110 transition">
+        AMBER
+      </button>
+      <button id="greenBtn" onclick="selectState('GREEN')" class="w-16 h-16 rounded-full bg-green-400 text-white font-bold hover:scale-110 transition">
+        GREEN
+      </button>
+    </div>
+
+    <!-- Trend Dropdown -->
+    <div class="mb-4">
+      <select id="trendSelect" class="w-full p-2 border rounded-md">
+        <option value="">Select Trend</option>
+        <option value="Deteriorating">Deteriorating</option>
+        <option value="Stable">Stable</option>
+        <option value="Improving">Improving</option>
+      </select>
+    </div>
+
+    <!-- Comment Box -->
+    <div class="mb-6">
+      <textarea id="commentBox" class="w-full p-2 border rounded-md" rows="3" placeholder="Add a comment..."></textarea>
+    </div>
+
+    <!-- Next Button -->
+    <div class="flex justify-center">
+      <button onclick="nextCard()" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-8 rounded-md">
+        Next
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+const cards = [
+  {% for card in cards %}
+    { id: {{ card.cardID }}, name: "{{ card.cardName }}" },
+  {% endfor %}
+];
+let currentCard = 0;
+let selectedState = "";
+let answers = [];
+
+function updateCard() {
+  document.getElementById('cardName').innerText = cards[currentCard].name;
+  document.getElementById('cardCounter').innerText = currentCard + 1;
+  clearSelections();
+}
+
+function selectState(state) {
+  selectedState = state;
+  document.getElementById('redBtn').classList.remove('ring-4');
+  document.getElementById('amberBtn').classList.remove('ring-4');
+  document.getElementById('greenBtn').classList.remove('ring-4');
+
+  if (state === 'RED') {
+    document.getElementById('redBtn').classList.add('ring-4', 'ring-red-300');
+  } else if (state === 'AMBER') {
+    document.getElementById('amberBtn').classList.add('ring-4', 'ring-yellow-300');
+  } else if (state === 'GREEN') {
+    document.getElementById('greenBtn').classList.add('ring-4', 'ring-green-300');
+  }
+}
+
+function clearSelections() {
+  selectedState = "";
+  document.getElementById('redBtn').classList.remove('ring-4', 'ring-red-300');
+  document.getElementById('amberBtn').classList.remove('ring-4', 'ring-yellow-300');
+  document.getElementById('greenBtn').classList.remove('ring-4', 'ring-green-300');
+  document.getElementById('trendSelect').selectedIndex = 0;
+  document.getElementById('commentBox').value = '';
+}
+
+function nextCard() {
+  const trend = document.getElementById('trendSelect').value;
+  const comment = document.getElementById('commentBox').value.trim();
+
+  if (!selectedState || !trend || !comment) {
+    alert('Please select a color, a trend, and write a comment before continuing.');
+    return;
+  }
+
+  answers.push({
+    card_id: cards[currentCard].id,
+    vote: selectedState,
+    trend: trend,
+    comment: comment,
+  });
+
+  if (currentCard < cards.length - 1) {
+    currentCard++;
+    updateCard();
+  } else {
+    submitVotes();
+  }
+}
+
+function submitVotes() {
+  const formData = new URLSearchParams();
+  formData.append('session', selectedSessionID); // ✅ Use injected session ID
+
+  answers.forEach(answer => {
+    formData.append(`vote_${answer.card_id}`, answer.vote);
+    formData.append(`trend_${answer.card_id}`, answer.trend);
+    formData.append(`comment_${answer.card_id}`, answer.comment);
+  });
+
+  fetch("{% url 'vote' %}", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: formData,
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error("Server error!");
+    }
+    return response.json();
+  })
+  .then(data => {
+    if (data.success) {
+      alert("Votes submitted successfully!");
+      window.location.href = "{% url 'dashboard' %}"; // ✅ Redirect cleanly
+    } else {
+      alert("Error submitting votes.");
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('Unexpected error occurred.');
+  });
+}
+
+window.onload = updateCard;
+</script>
+{% endblock %}
