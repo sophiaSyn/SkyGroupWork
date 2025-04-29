@@ -1,4 +1,4 @@
-# Sky Group Work Project - Mohammad Bari, Rahath Ali, Rtihik Jeyathees, Hashim Khan
+# Sky Group Work Project - Mohammad Bari, Rahath Ali, Rtihik Jeyathees
 
 Django-Web Based Application for SKY Coursework
 
