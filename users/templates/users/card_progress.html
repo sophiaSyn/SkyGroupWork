@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ selected_card.cardName }} Progress - Sky Health Check{% endblock %}
+
+{% block content %}
+<div class="auth-box">
+    <h2>{{ selected_card.cardName }} - Progress Over Time</h2>
+
+    {% if session_labels %}
+    <div style="max-width: 1000px; margin: auto; padding: 20px;">
+        <div style="position: relative; height: 500px; width: 100%;">
+            <canvas id="cardProgressChart"></canvas>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <a href="{% url 'select_card' %}">← Select Another Card</a> |
+            <a href="{% url 'dashboard' %}">← Back to Dashboard</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('cardProgressChart').getContext('2d');
+
+        const cardProgressChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {{ session_labels|safe }},
+                datasets: [
+                    {
+                        label: 'Red Votes',
+                        data: {{ red_counts|safe }},
+                        borderColor: 'red',
+                        backgroundColor: 'rgba(255, 0, 0, 0.1)',
+                        fill: false,
+                        tension: 0.4,  // smooth curve
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                    },
+                    {
+                        label: 'Amber Votes',
+                        data: {{ amber_counts|safe }},
+                        borderColor: 'orange',
+                        backgroundColor: 'rgba(255, 165, 0, 0.1)',
+                        fill: false,
+                        tension: 0.4,  // smooth curve
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                    },
+                    {
+                        label: 'Green Votes',
+                        data: {{ green_counts|safe }},
+                        borderColor: 'green',
+                        backgroundColor: 'rgba(0, 255, 0, 0.1)',
+                        fill: false,
+                        tension: 0.4,  // smooth curve
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                    }
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        ticks: {
+                            autoSkip: true,
+                            maxRotation: 45,
+                            minRotation: 0,
+                        },
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1,
+                        },
+                        grid: {
+                            color: 'rgba(200, 200, 200, 0.2)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                    }
+                },
+                elements: {
+                    line: {
+                        tension: 0.4,  // smoother lines
+                    }
+                }
+            }
+        });
+    </script>
+
+
+    {% else %}
+    <p>No sessions found yet for this card!</p>
+    {% endif %}
+</div>
+{% endblock %}

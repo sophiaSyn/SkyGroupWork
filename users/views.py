@@ -5,8 +5,10 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from users.models import User as CustomUser
 from django.contrib.auth.decorators import login_required
-from health.models import Vote, Department, Team, State, Session
+from health.models import Vote, Department, Team, State, Session, Card
 from users.models import Role
+from django.shortcuts import get_object_or_404
+from collections import defaultdict
 
 # View for the About Us Page (index.html) which is now the homepage
 def index(request):
@@ -21,11 +23,9 @@ def login_view(request):
             password = form.cleaned_data["password"]
 
             try:
-                # Try finding by email first
                 user = User.objects.get(email=identifier, password=password)
             except User.DoesNotExist:
                 try:
-                    # Then try by username
                     user = User.objects.get(username=identifier, password=password)
                 except User.DoesNotExist:
                     user = None
@@ -42,7 +42,11 @@ def login_view(request):
 
     return render(request, "users/login.html", {"form": form})
 
+
+
 # Sign Up View
+from django.contrib.auth.hashers import make_password
+
 def signup_view(request):
     if request.method == "POST":
         form = SignUpForm(request.POST)
@@ -53,16 +57,22 @@ def signup_view(request):
             role = form.cleaned_data["role"]
             team = form.cleaned_data["team"]
 
+            # Check if email OR username already exists
             if User.objects.filter(email=email).exists():
                 form.add_error("email", "Email already exists.")
+            elif User.objects.filter(username=username).exists():
+                form.add_error("username", "Username already exists.")
             else:
                 user = User.objects.create(
                     username=username,
                     email=email,
-                    password=password,
                     roleId=role,
                     teamID=team
                 )
+                # Set hashed password
+                user.password = make_password(password)
+                user.save()
+
                 request.session["user_id"] = user.userId
                 request.session["username"] = user.username
                 request.session["role"] = role.roleName
@@ -71,6 +81,7 @@ def signup_view(request):
         form = SignUpForm()
 
     return render(request, "users/signup.html", {"form": form})
+
 
 # Dashboard View
 def dashboard_view(request):
@@ -82,11 +93,32 @@ def dashboard_view(request):
     except CustomUser.DoesNotExist:
         return redirect("login")
 
-    return render(request, "users/dashboard.html", {
+    role = request.session.get('role')
+
+    context = {
         "username": user.username,
-        "role_name": user.roleId.roleName,  # Pass roleName directly
-        "custom_user": user  # Full user object if needed
-    })
+        "role_name": user.roleId.roleName,
+        "custom_user": user
+    }
+
+    if role == "Team Leader":
+        # Fetch team votes
+        team_votes = Vote.objects.filter(userID__teamID=user.teamID)
+        
+        red_count = team_votes.filter(stateID__stateColour="RED").count()
+        amber_count = team_votes.filter(stateID__stateColour="AMBER").count()
+        green_count = team_votes.filter(stateID__stateColour="GREEN").count()
+
+        context.update({
+            "team_summary": {
+                "Red": red_count,
+                "Amber": amber_count,
+                "Green": green_count
+            }
+        })
+        print("Logged in session:", request.session.get('user_id'))
+
+    return render(request, "users/dashboard.html", context)
 
 # Log Out View
 def logout_view(request):
@@ -158,3 +190,168 @@ def summary_view(request):
         'department_data': department_data,
         'team_data': team_data,
     })
+
+def team_summary_view(request):
+    if 'user_id' not in request.session:
+        return redirect('login')
+
+    try:
+        user = CustomUser.objects.get(userId=request.session['user_id'])
+    except CustomUser.DoesNotExist:
+        return redirect('login')
+
+    role = request.session.get('role')
+
+    if role != "Team Leader":
+        return redirect('dashboard')  # Only team leaders can view their team summary page
+
+    # Fetch team votes
+    team_votes = Vote.objects.filter(userID__teamID=user.teamID)
+
+    red_count = team_votes.filter(stateID__stateColour="RED").count()
+    amber_count = team_votes.filter(stateID__stateColour="AMBER").count()
+    green_count = team_votes.filter(stateID__stateColour="GREEN").count()
+
+    context = {
+        'team_name': user.teamID.teamName,
+        'team_summary': {
+            'Red': red_count,
+            'Amber': amber_count,
+            'Green': green_count,
+        }
+    }
+
+    return render(request, 'users/team_summary.html', context)
+
+# --- inside users/views.py ---
+
+def team_progress_view(request):
+    if 'user_id' not in request.session:
+        return redirect('login')
+
+    try:
+        user = CustomUser.objects.get(userId=request.session['user_id'])
+    except CustomUser.DoesNotExist:
+        return redirect('login')
+
+    role = request.session.get('role')
+
+    if role != "Team Leader":
+        return redirect('dashboard')
+
+    # Get all sessions ordered by date
+    sessions = Session.objects.all().order_by('startDate')
+
+    # Prepare data for the chart
+    session_labels = []
+    red_counts = []
+    amber_counts = []
+    green_counts = []
+
+    for session in sessions:
+        votes = Vote.objects.filter(sessionID=session, userID__teamID=user.teamID)
+        red_count = votes.filter(stateID__stateColour="RED").count()
+        amber_count = votes.filter(stateID__stateColour="AMBER").count()
+        green_count = votes.filter(stateID__stateColour="GREEN").count()
+
+        session_labels.append(str(session.startDate))   # use startDate as label
+        red_counts.append(red_count)
+        amber_counts.append(amber_count)
+        green_counts.append(green_count)
+
+    context = {
+        'team_name': user.teamID.teamName,
+        'session_labels': session_labels,
+        'red_counts': red_counts,
+        'amber_counts': amber_counts,
+        'green_counts': green_counts,
+    }
+
+    return render(request, 'users/team_progress.html', context)
+
+
+
+def select_card_view(request):
+    if 'user_id' not in request.session:
+        return redirect('login')
+
+    cards = Card.objects.all().order_by('order')  # Order by 'order' field (all lowercase 'order' as shown in admin)
+
+    return render(request, 'users/select_card.html', {
+        'cards': cards,
+    })
+
+
+
+
+from collections import defaultdict
+from django.shortcuts import render, redirect
+from health.models import Vote, Session, Card
+
+
+
+def card_progress_view(request):
+    if 'user_id' not in request.session:
+        return redirect('login')
+
+    card_id = request.GET.get('card')
+    if not card_id:
+        return redirect('select_card')
+
+    try:
+        selected_card = Card.objects.get(cardID=card_id)
+    except Card.DoesNotExist:
+        return redirect('select_card')
+
+    try:
+        current_user = User.objects.get(userId=request.session['user_id'])
+    except User.DoesNotExist:
+        return redirect('login')
+
+    # Get the team of the current user
+    user_team = current_user.teamID
+
+    # Find all users in that team
+    team_users = User.objects.filter(teamID=user_team)
+
+    # Find all votes by those users for the selected card
+    votes = Vote.objects.filter(
+        userID__in=team_users,
+        cardID=selected_card
+    )
+
+    # Group votes by session date
+    votes_by_date = defaultdict(lambda: {'RED': 0, 'AMBER': 0, 'GREEN': 0})
+
+    for vote in votes:
+        session_date = vote.sessionID.startDate.strftime('%Y-%m-%d')
+        if vote.stateID.stateColour == 'RED':
+            votes_by_date[session_date]['RED'] += 1
+        elif vote.stateID.stateColour == 'AMBER':
+            votes_by_date[session_date]['AMBER'] += 1
+        elif vote.stateID.stateColour == 'GREEN':
+            votes_by_date[session_date]['GREEN'] += 1
+
+    if votes_by_date:
+        session_labels = sorted(votes_by_date.keys())
+        red_counts = [votes_by_date[date]['RED'] for date in session_labels]
+        amber_counts = [votes_by_date[date]['AMBER'] for date in session_labels]
+        green_counts = [votes_by_date[date]['GREEN'] for date in session_labels]
+    else:
+        session_labels = []
+        red_counts = []
+        amber_counts = []
+        green_counts = []
+
+    context = {
+        'selected_card': selected_card,
+        'session_labels': session_labels,
+        'red_counts': red_counts,
+        'amber_counts': amber_counts,
+        'green_counts': green_counts,
+    }
+
+    return render(request, 'users/card_progress.html', context)
+
+
+

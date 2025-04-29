@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Select Card - Sky Health Check{% endblock %}
+
+{% block content %}
+<div class="auth-box">
+    <h2>Select a Card to View Progress</h2>
+
+    <form method="get" action="{% url 'card_progress' %}">
+        <label for="card">Select a Card to View Progress:</label>
+        <select id="card" name="card" required>
+            {% for card in cards %}
+                <option value="{{ card.cardID }}">{{ card.cardName }}</option>
+            {% endfor %}
+        </select>
+    
+        <br><br>
+        <button type="submit">View Progress</button>
+    </form>
+    
+
+    <div style="margin-top: 20px;">
+        <a href="{% url 'dashboard' %}">← Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

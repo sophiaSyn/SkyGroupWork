@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Team Progress - Sky Health Check{% endblock %}
+
+{% block content %}
+<div class="auth-box">
+
+    <h2 style="text-align: center; margin-bottom: 30px;">
+        {{ team_name }} - Voting Progress Timeline
+    </h2>
+
+    {% if session_labels %}
+    <div style="max-width: 1200px; margin: auto;">
+        <div style="position: relative; height: 500px; width: 100%;">
+            <canvas id="teamProgressChart"></canvas>
+        </div>
+
+        <div style="margin-top: 30px; text-align: center;">
+            <a href="{% url 'dashboard' %}" style="font-size: 18px;">← Back to Dashboard</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+    const ctx = document.getElementById('teamProgressChart').getContext('2d');
+
+    const teamProgressChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {{ session_labels|safe }},
+            datasets: [
+                {
+                    label: 'Red Votes',
+                    data: {{ red_counts|safe }},
+                    borderColor: 'red',
+                    backgroundColor: 'rgba(255, 0, 0, 0.2)',
+                    fill: false,
+                    tension: 0.3,
+                },
+                {
+                    label: 'Amber Votes',
+                    data: {{ amber_counts|safe }},
+                    borderColor: 'orange',
+                    backgroundColor: 'rgba(255, 165, 0, 0.2)',
+                    fill: false,
+                    tension: 0.3,
+                },
+                {
+                    label: 'Green Votes',
+                    data: {{ green_counts|safe }},
+                    borderColor: 'green',
+                    backgroundColor: 'rgba(0, 255, 0, 0.2)',
+                    fill: false,
+                    tension: 0.3,
+                }
+            ],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1 }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: false,
+                }
+            }
+        }
+    });
+    </script>
+
+    {% else %}
+    <p>No sessions found yet!</p>
+    {% endif %}
+</div>    
+{% endblock %}

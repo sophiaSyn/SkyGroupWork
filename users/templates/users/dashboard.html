@@ -5,28 +5,50 @@
 
 {% block content %}
 <div class="auth-box">
-  <h2>Welcome, {{ username }}!</h2>
-  <p>Your role: <strong>{{ role_name }}</strong></p>
+    <h2>Welcome, {{ username }}!</h2>
+    <p>Your role: <strong>{{ role_name }}</strong></p>
 
-  <!-- Show button based on role -->
-  {% if role_name == "Engineer" or role_name == "Team Leader" %}
+    <!-- Show button based on role -->
+    {% if role_name == "Engineer" or role_name == "Team Leader" %}
     <div style="margin-top: 20px;">
-      <a href="{% url 'vote' %}" class="btn btn-primary" style="padding: 10px 20px; font-size: 16px;">
-        Start Voting
-      </a>
+        <a href="{% url 'vote' %}" class="btn btn-primary" style="padding: 10px 20px; font-size: 16px;">
+            Start Voting
+        </a>
     </div>
-  {% elif role_name == "Department Leader" or role_name == "Senior Manager" %}
-    <div style="margin-top: 20px;">
-      <a href="{% url 'summary' %}" class="btn btn-success" style="padding: 10px 20px; font-size: 16px;">
-        View Summary
-      </a>
-    </div>
-  {% endif %}
+    {% endif %}
 
-  <div style="margin-top: 20px;">
-    <a href="{% url 'logout' %}" class="btn btn-danger" style="padding: 10px 20px; font-size: 16px;">
-      Logout
+    {% if role_name == "Team Leader" %}
+<div style="margin-top: 20px;">
+    <a href="{% url 'team_summary' %}" class="btn btn-info" style="padding: 10px 20px; font-size: 16px;">
+        View My Team Summary
     </a>
-  </div>
+</div>
+
+<div style="margin-top: 20px;">
+    <a href="{% url 'team_progress' %}" class="btn btn-warning" style="padding: 10px 20px; font-size: 16px;">
+        View Team Progress Over Time
+    </a>
+</div>
+
+<div style="margin-top: 20px;">
+  <a href="{% url 'select_card' %}" class="btn btn-secondary" style="padding: 10px 20px; font-size: 16px;">
+      View Card Progress
+  </a>
+</div>
+{% endif %}
+
+    {% if role_name == "Department Leader" or role_name == "Senior Manager" %}
+    <div style="margin-top: 20px;">
+        <a href="{% url 'summary' %}" class="btn btn-success" style="padding: 10px 20px; font-size: 16px;">
+            View Department/Team Summary
+        </a>
+    </div>
+    {% endif %}
+
+    <div style="margin-top: 20px;">
+        <a href="{% url 'logout' %}" class="btn btn-danger" style="padding: 10px 20px; font-size: 16px;">
+            Logout
+        </a>
+    </div>
 </div>
 {% endblock %}

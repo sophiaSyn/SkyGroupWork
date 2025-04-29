@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Team Voting Summary - Sky Health Check{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-8">
+    <h1 class="text-3xl font-bold text-center mb-8">{{ team_name }} - Voting Summary</h1>
+
+    <div class="text-center mb-8">
+        <p><strong style="color:red;">Red:</strong> {{ team_summary.Red }}</p>
+        <p><strong style="color:orange;">Amber:</strong> {{ team_summary.Amber }}</p>
+        <p><strong style="color:green;">Green:</strong> {{ team_summary.Green }}</p>
+    </div>
+
+    <div class="flex justify-center">
+        <canvas id="teamSummaryChart" style="max-width:600px;"></canvas>
+    </div>
+
+    <!-- Back Button -->
+    <div class="flex justify-center mt-8">
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary" style="padding: 10px 20px; font-size: 16px;">
+            ← Back to Dashboard
+        </a>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+const ctx = document.getElementById('teamSummaryChart').getContext('2d');
+
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['Red', 'Amber', 'Green'],
+        datasets: [{
+            label: '{{ team_name }} Votes',
+            data: [{{ team_summary.Red }}, {{ team_summary.Amber }}, {{ team_summary.Green }}],
+            backgroundColor: [
+                'rgba(239, 68, 68, 0.7)',    // Red
+                'rgba(251, 191, 36, 0.7)',   // Amber
+                'rgba(34, 197, 94, 0.7)'     // Green
+            ],
+            borderColor: [
+                'rgba(239, 68, 68, 1)',
+                'rgba(251, 191, 36, 1)',
+                'rgba(34, 197, 94, 1)'
+            ],
+            borderWidth: 2
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    stepSize: 10,
+                    font: {
+                        size: 14
+                    }
+                }
+            },
+            x: {
+                ticks: {
+                    font: {
+                        size: 16
+                    }
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                display: true,
+                labels: {
+                    font: {
+                        size: 16
+                    }
+                }
+            }
+        }
+    }
+});
+</script>
+{% endblock %}
