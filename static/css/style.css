@@ -1,4 +1,4 @@
-/* General Reset */
+/* Body Styles */
 body {
     margin: 0;
     font-family: Arial, sans-serif;
@@ -8,12 +8,12 @@ body {
     min-height: 100vh;
 }
 
-/* White Top Bar with Logo on Left and Nav Items on Right */
+
 .top-bar {
     background-color: white;
     padding: 10px 20px;
     display: flex;
-    justify-content: space-between; /* Aligns logo and nav-items on opposite sides */
+    justify-content: space-between; 
     align-items: center;
 }
 
@@ -23,7 +23,7 @@ body {
 
 .nav-items {
     display: flex;
-    gap: 20px; /* Space out the links */
+    gap: 20px; 
 }
 
 .nav-items a {
@@ -32,7 +32,7 @@ body {
     font-weight: bold;
 }
 
-/* Gradient Sky Bar (Navbar Inside Gradient) */
+/* gradient sky bar  */
 .gradient-bar {
     background: linear-gradient(to right, #ff6600, #ff0066, #9900cc, #0033cc);
     padding: 15px 0;
@@ -46,7 +46,7 @@ body {
     font-weight: 700;
 }
 
-/* Page Content Styling */
+
 .content-wrapper {
     flex: 1;
     display: flex;
@@ -55,7 +55,7 @@ body {
     padding: 40px 20px;
 }
 
-/* Auth Box (Login/Signup Form White Box) */
+/* auth box */
 .auth-box {
     background-color: white;
     padding: 30px;
@@ -70,7 +70,7 @@ body {
     margin-bottom: 20px;
 }
 
-/* Forms */
+/* forms */
 form {
     display: flex;
     flex-direction: column;
@@ -108,7 +108,7 @@ button:hover {
     color: #1a73e8;
 }
 
-/* Footer */
+/* footer */
 .footer {
     background: linear-gradient(to right, #ff6600, #ff0066, #9900cc, #0033cc);
     color: white;
@@ -122,14 +122,14 @@ button:hover {
     text-decoration: underline;
 }
 
-/* About Us Page Container (White Box Styling) */
+/* about Us page container */
 .about-us-container {
     display: flex;
     justify-content: center;
     padding: 40px 20px;
 }
 
-/* White Box Styling for About Us Text */
+
 .about-us-box {
     background-color: white;
     padding: 40px;

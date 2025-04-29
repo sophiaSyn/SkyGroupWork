@@ -8,7 +8,7 @@
     <h2>Welcome, {{ username }}!</h2>
     <p>Your role: <strong>{{ role_name }}</strong></p>
 
-    <!-- Show button based on role -->
+    <!-- show button based on role -->
     {% if role_name == "Engineer" or role_name == "Team Leader" %}
     <div style="margin-top: 20px;">
         <a href="{% url 'vote' %}" class="btn btn-primary" style="padding: 10px 20px; font-size: 16px;">

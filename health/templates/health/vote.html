@@ -1,25 +1,25 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<!-- Inject the selected Session ID into JavaScript -->
+<!-- put the selected session id into javascript -->
 <script>
-const selectedSessionID = {{ sessions.0.sessionID }}; // ✅ Correctly pass session ID
+const selectedSessionID = {{ sessions.0.sessionID }}; 
 </script>
 
 <div class="flex justify-center items-center min-h-[calc(100vh-8rem)] bg-gray-100">
   <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md flex flex-col justify-center">
 
-    <!-- Card Counter -->
+    <!-- card counter -->
     <div class="text-center text-gray-500 text-sm mb-4">
       Card <span id="cardCounter">1</span> of {{ cards|length }}
     </div>
 
-    <!-- Card Title -->
+    <!-- name of cards -->
     <h1 id="cardName" class="text-2xl font-bold text-center mb-6">
       {{ cards.0.cardName }}
     </h1>
 
-    <!-- Traffic Light Buttons -->
+    <!-- colour of buttons -->
     <div class="flex justify-center gap-6 mb-6">
       <button id="redBtn" onclick="selectState('RED')" class="w-16 h-16 rounded-full bg-red-400 text-white font-bold hover:scale-110 transition">
         RED
@@ -32,7 +32,7 @@ const selectedSessionID = {{ sessions.0.sessionID }}; // ✅ Correctly pass sess
       </button>
     </div>
 
-    <!-- Trend Dropdown -->
+    <!-- trend dropdown list -->
     <div class="mb-4">
       <select id="trendSelect" class="w-full p-2 border rounded-md">
         <option value="">Select Trend</option>
@@ -42,12 +42,12 @@ const selectedSessionID = {{ sessions.0.sessionID }}; // ✅ Correctly pass sess
       </select>
     </div>
 
-    <!-- Comment Box -->
+    <!-- box for comments -->
     <div class="mb-6">
       <textarea id="commentBox" class="w-full p-2 border rounded-md" rows="3" placeholder="Add a comment..."></textarea>
     </div>
 
-    <!-- Next Button -->
+    <!-- next button -->
     <div class="flex justify-center">
       <button onclick="nextCard()" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-8 rounded-md">
         Next
@@ -57,7 +57,7 @@ const selectedSessionID = {{ sessions.0.sessionID }}; // ✅ Correctly pass sess
   </div>
 </div>
 
-<!-- JavaScript -->
+<!-- javascript -->
 <script>
 const cards = [
   {% for card in cards %}
@@ -124,7 +124,7 @@ function nextCard() {
 
 function submitVotes() {
   const formData = new URLSearchParams();
-  formData.append('session', selectedSessionID); // ✅ Use injected session ID
+  formData.append('session', selectedSessionID); 
 
   answers.forEach(answer => {
     formData.append(`vote_${answer.card_id}`, answer.vote);
@@ -148,7 +148,7 @@ function submitVotes() {
   .then(data => {
     if (data.success) {
       alert("Votes submitted successfully!");
-      window.location.href = "{% url 'dashboard' %}"; // ✅ Redirect cleanly
+      window.location.href = "{% url 'dashboard' %}"; 
     } else {
       alert("Error submitting votes.");
     }

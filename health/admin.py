@@ -23,8 +23,8 @@ class TrendAdmin(admin.ModelAdmin):
 
 @admin.register(Card)
 class CardAdmin(admin.ModelAdmin):
-    list_display = ('cardName', 'order')  # show cardName and order in Django admin
-    ordering = ('order',)  # default order by 'order' field
+    list_display = ('cardName', 'order')  
+    ordering = ('order',)  
 
 @admin.register(Vote)
 class VoteAdmin(admin.ModelAdmin):

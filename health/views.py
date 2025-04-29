@@ -16,7 +16,7 @@ def vote_view(request):
 
     cards = Card.objects.all().order_by('order')
 
-    # ✅ Check if the user already has an active session
+    # check for active session
     active_sessions = Session.objects.filter(userID=user).order_by('-startDate')
 
     if active_sessions.exists():
@@ -50,7 +50,7 @@ def vote_view(request):
             if vote_value:
                 Vote.objects.create(
                     sessionID=selected_session,
-                    userID=user,  # 🛑 You MUST add this line to link the vote to the user
+                    userID=user, 
                     stateID=State.objects.get(stateColour=vote_value),
                     trendID=Trend.objects.get(trendStatus=trend_value),
                     cardID=card,

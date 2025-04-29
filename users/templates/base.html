@@ -6,30 +6,30 @@
     <title>{% block title %}Sky Health Check{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
-    <!-- TailwindCSS CDN -->
+    
 <script src="https://cdn.tailwindcss.com"></script>
 
 </head>
 <body>
 
-    <!-- Top White Bar with Sky Logo on the Left and Nav Items on the Right -->
+    <!-- top white bar with sky logo on the left and nav items on the right -->
     <div class="top-bar">
         <img src="{% static 'images/skylogo.png' %}" alt="Sky Logo" class="sky-logo">
         <div class="nav-items">
-            <!-- Show 'About Us' link unless on About Us page and logged in -->
+            <!-- show 'about us' link unless on about Us page and logged in -->
             {% if request.path != '/users/' %}
                 <a href="{% url 'index' %}">About Us</a>
             {% else %}
-                <!-- Change 'About Us' to 'Dashboard' if on About Us page and logged in -->
+                <!-- change 'about Us' to 'dashboard' if on about us page and logged in -->
                 <a href="{% url 'dashboard' %}">Dashboard</a>
             {% endif %}
 
             {% if user.is_authenticated %}
-                <!-- If logged in, show 'Dashboard' and 'Log Out' -->
+                <!-- if logged in, show 'dashboard' and 'log out' -->
                 <a href="{% url 'dashboard' %}">Dashboard</a>
                 <a href="{% url 'logout' %}">Log Out</a>
             {% else %}
-                <!-- If not logged in, show 'Log In' and 'Sign Up' links -->
+                <!-- if not logged in, show 'log in' and 'sign up' links -->
                 {% if request.path == '/users/signup/' %}
                     <a href="{% url 'login' %}">Log In</a>
                 {% elif request.path == '/users/login/' %}
@@ -42,18 +42,18 @@
         </div>
     </div>
 
-    <!-- Gradient Sky Bar with Sky Health Check Title -->
+    <!-- gradient sky bar with sky health check title -->
     <div class="gradient-bar">
         <h1 class="sky-title">Sky Health Check</h1>
     </div>
 
-    <!-- Page Content -->
+    <!-- page content -->
     <div class="content-wrapper">
         {% block content %}
         {% endblock %}
     </div>
 
-    <!-- Footer -->
+    <!-- footer -->
     <footer class="footer">
         <p>&copy; 2025 Sky UK | <a href="#">Privacy & Cookies</a> | <a href="#">Terms & Conditions</a></p>
     </footer>

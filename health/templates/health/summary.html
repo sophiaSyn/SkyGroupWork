@@ -7,7 +7,7 @@
 <div class="container mx-auto p-8">
   <h1 class="text-3xl font-bold text-center mb-8">Voting Summary</h1>
 
-  <!-- Department Summary Section -->
+  <!-- department summary  -->
   <div class="mb-12">
     <h2 class="text-2xl font-semibold mb-6 text-center">Department Summary</h2>
     {% if department_data %}
@@ -24,7 +24,7 @@
     {% endif %}
   </div>
 
-  <!-- Team Summary Section -->
+  <!-- team summary  -->
   <div>
     <h2 class="text-2xl font-semibold mb-6 text-center">Team Summary</h2>
     {% if team_data %}
@@ -42,11 +42,11 @@
   </div>
 </div>
 
-<!-- Chart.js -->
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-// Department charts
+// department charts
 {% for department, votes in department_data.items %}
 const deptCtx{{ forloop.counter }} = document.getElementById('departmentChart_{{ forloop.counter }}').getContext('2d');
 new Chart(deptCtx{{ forloop.counter }}, {
@@ -61,7 +61,7 @@ new Chart(deptCtx{{ forloop.counter }}, {
 });
 {% endfor %}
 
-// Team charts
+// team charts
 {% for team, votes in team_data.items %}
 const teamCtx{{ forloop.counter }} = document.getElementById('teamChart_{{ forloop.counter }}').getContext('2d');
 new Chart(teamCtx{{ forloop.counter }}, {

@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-# Create your models here.
+# models
 
 class Department(models.Model):
     departmentNo = models.AutoField(primary_key=True) 
@@ -58,11 +58,11 @@ class Vote(models.Model):
     voteID = models.AutoField(primary_key=True)
     createdAt = models.DateTimeField(auto_now_add=True)
     sessionID = models.ForeignKey(Session, on_delete=models.CASCADE)
-    userID = models.ForeignKey('users.User', on_delete=models.CASCADE, null=True, blank=True)  # 👈 Add null=True
-    cardID = models.ForeignKey(Card, on_delete=models.CASCADE, null=True, blank=True)           # 👈 Add null=True
+    userID = models.ForeignKey('users.User', on_delete=models.CASCADE, null=True, blank=True)  
+    cardID = models.ForeignKey(Card, on_delete=models.CASCADE, null=True, blank=True)           
     stateID = models.ForeignKey(State, on_delete=models.CASCADE)
     trendID = models.ForeignKey(Trend, on_delete=models.CASCADE)
-    comment = models.TextField(blank=True, null=True)                                           # 👈 Add null=True
+    comment = models.TextField(blank=True, null=True)                                           
 
 
     def __str__(self):

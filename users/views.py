@@ -10,11 +10,11 @@ from users.models import Role
 from django.shortcuts import get_object_or_404
 from collections import defaultdict
 
-# View for the About Us Page (index.html) which is now the homepage
+# about us view
 def index(request):
-    return render(request, 'index.html')  # This is the About Us page now
+    return render(request, 'index.html')  
 
-# Login View
+# login View
 def login_view(request):
     if request.method == "POST":
         form = LoginForm(request.POST)
@@ -44,7 +44,7 @@ def login_view(request):
 
 
 
-# Sign Up View
+# sign up view
 from django.contrib.auth.hashers import make_password
 
 def signup_view(request):
@@ -57,7 +57,7 @@ def signup_view(request):
             role = form.cleaned_data["role"]
             team = form.cleaned_data["team"]
 
-            # Check if email OR username already exists
+            # check if email or username already exists
             if User.objects.filter(email=email).exists():
                 form.add_error("email", "Email already exists.")
             elif User.objects.filter(username=username).exists():
@@ -69,7 +69,7 @@ def signup_view(request):
                     roleId=role,
                     teamID=team
                 )
-                # Set hashed password
+                
                 user.password = make_password(password)
                 user.save()
 
@@ -83,7 +83,7 @@ def signup_view(request):
     return render(request, "users/signup.html", {"form": form})
 
 
-# Dashboard View
+# dashboard view
 def dashboard_view(request):
     if 'user_id' not in request.session:
         return redirect("login")
@@ -102,7 +102,7 @@ def dashboard_view(request):
     }
 
     if role == "Team Leader":
-        # Fetch team votes
+        
         team_votes = Vote.objects.filter(userID__teamID=user.teamID)
         
         red_count = team_votes.filter(stateID__stateColour="RED").count()
@@ -120,17 +120,17 @@ def dashboard_view(request):
 
     return render(request, "users/dashboard.html", context)
 
-# Log Out View
+# log out view
 def logout_view(request):
     request.session.flush()
     return redirect("login")
 
-# Home Redirect View (Redirect to About Us page or Dashboard)
+# home redirect view 
 def home_redirect_view(request):
     if "user_id" in request.session:
-        return redirect("dashboard")  # Redirect to dashboard if logged in
+        return redirect("dashboard")  
     else:
-        return redirect("login")  # Redirect to login if not logged in
+        return redirect("index")  
 
 
 
@@ -139,14 +139,14 @@ def summary_view(request):
         return redirect('login')
 
     try:
-        user = User.objects.get(userId=request.session['user_id'])  # Make sure you imported your correct User model
+        user = User.objects.get(userId=request.session['user_id'])  
     except User.DoesNotExist:
         return redirect('login')
 
-    # Fetch only completed sessions (future-proof)
+    # fetch only completed sessions 
     completed_sessions = Session.objects.all()
 
-    # Department Summary
+    # department summary
     departments = Department.objects.all()
     department_data = {}
 
@@ -166,7 +166,7 @@ def summary_view(request):
                 "Green": green_count,
             }
 
-    # Team Summary
+    # team summary
     teams = Team.objects.all()
     team_data = {}
 
@@ -203,9 +203,9 @@ def team_summary_view(request):
     role = request.session.get('role')
 
     if role != "Team Leader":
-        return redirect('dashboard')  # Only team leaders can view their team summary page
+        return redirect('dashboard')  
 
-    # Fetch team votes
+    
     team_votes = Vote.objects.filter(userID__teamID=user.teamID)
 
     red_count = team_votes.filter(stateID__stateColour="RED").count()
@@ -223,7 +223,7 @@ def team_summary_view(request):
 
     return render(request, 'users/team_summary.html', context)
 
-# --- inside users/views.py ---
+
 
 def team_progress_view(request):
     if 'user_id' not in request.session:
@@ -239,10 +239,10 @@ def team_progress_view(request):
     if role != "Team Leader":
         return redirect('dashboard')
 
-    # Get all sessions ordered by date
+    
     sessions = Session.objects.all().order_by('startDate')
 
-    # Prepare data for the chart
+    
     session_labels = []
     red_counts = []
     amber_counts = []
@@ -254,7 +254,7 @@ def team_progress_view(request):
         amber_count = votes.filter(stateID__stateColour="AMBER").count()
         green_count = votes.filter(stateID__stateColour="GREEN").count()
 
-        session_labels.append(str(session.startDate))   # use startDate as label
+        session_labels.append(str(session.startDate))   
         red_counts.append(red_count)
         amber_counts.append(amber_count)
         green_counts.append(green_count)
@@ -275,18 +275,11 @@ def select_card_view(request):
     if 'user_id' not in request.session:
         return redirect('login')
 
-    cards = Card.objects.all().order_by('order')  # Order by 'order' field (all lowercase 'order' as shown in admin)
+    cards = Card.objects.all().order_by('order')  
 
     return render(request, 'users/select_card.html', {
         'cards': cards,
     })
-
-
-
-
-from collections import defaultdict
-from django.shortcuts import render, redirect
-from health.models import Vote, Session, Card
 
 
 
@@ -308,19 +301,19 @@ def card_progress_view(request):
     except User.DoesNotExist:
         return redirect('login')
 
-    # Get the team of the current user
+    # get the team of the current user
     user_team = current_user.teamID
 
-    # Find all users in that team
+    # find all users in that team
     team_users = User.objects.filter(teamID=user_team)
 
-    # Find all votes by those users for the selected card
+    # find all votes by those users for the selected card
     votes = Vote.objects.filter(
         userID__in=team_users,
         cardID=selected_card
     )
 
-    # Group votes by session date
+    # group votes by session date
     votes_by_date = defaultdict(lambda: {'RED': 0, 'AMBER': 0, 'GREEN': 0})
 
     for vote in votes:
